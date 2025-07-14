@@ -1,0 +1,14 @@
+version: 2
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 0
+- package-ecosystem: github-actions
+  ignore:
+        - dependency-name: "*"
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 0

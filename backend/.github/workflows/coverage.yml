@@ -1,0 +1,81 @@
+name: Coverage
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 4421
+          POSTGRES_DB: backend_development
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:4421@localhost:5432/backend_development
+      POSTGRES_PORT: 5432
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: 4421
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev postgresql-client
+
+      - name: Configurar chave do Rails
+        run: |
+          echo "${{ secrets.RAILS_MASTER_KEY }}" > config/master.key
+          chmod 600 config/master.key
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..10}; do
+            if pg_isready -h localhost -p 5432 -U postgres -d backend_development_coverage; then
+              echo "PostgreSQL is ready"
+              exit 0
+            fi
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 5
+          done
+          echo "PostgreSQL failed to become ready"
+          exit 1
+
+      - name: Setup database
+        run: |
+          bin/rails db:create
+          bin/rails db:migrate
+
+      - name: Run tests with RSpec and generate coverage
+        run: bundle exec rspec
+
+      - name: Upload cobertura para Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: coverage/.resultset.json
+          flags: rspec
+          name: codecov-coverage-only
+          fail_ci_if_error: true

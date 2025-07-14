@@ -1,0 +1,493 @@
+---
+openapi: 3.0.1
+info:
+  title: RoterizadorApp API V1
+  version: v1
+  description: Documentação da API V1 para o RoterizadorApp. Gerencia pedidos, clientes,
+    lojas, usuários e rotas de entrega.
+paths:
+  "/api/v1/orders":
+    get:
+      summary: Lista todos os pedidos
+      tags:
+      - Orders
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: pedidos encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    status:
+                      type: string
+                      enum:
+                      - pending
+                      - in_route
+                      - delivered
+                      - cancelled
+                    delivery_address:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    client:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        address:
+                          type: string
+                    store:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        address:
+                          type: string
+                  required:
+                  - id
+                  - status
+                  - delivery_address
+                  - client
+                  - store
+        '401':
+          description: não autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: You need to sign in or sign up before continuing.
+    post:
+      summary: Cria um novo pedido
+      tags:
+      - Orders
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '201':
+          description: pedido criado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  status:
+                    type: string
+                    enum:
+                    - pending
+                    - in_route
+                    - delivered
+                    - cancelled
+                  delivery_address:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+                  client:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      address:
+                        type: string
+                  store:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      address:
+                        type: string
+                required:
+                - id
+                - status
+                - delivery_address
+                - client
+                - store
+        '422':
+          description: entidade não processável (erro de validação)
+        '401':
+          description: não autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: You need to sign in or sign up before continuing.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: integer
+                  description: ID do cliente
+                store_id:
+                  type: integer
+                  description: ID da loja
+                delivery_address:
+                  type: string
+                  description: Endereço de entrega
+              required:
+              - client_id
+              - store_id
+              - delivery_address
+  "/api/v1/orders/{id}":
+    get:
+      summary: Busca um pedido específico
+      tags:
+      - Orders
+      security:
+      - Bearer: []
+      parameters:
+      - name: id
+        in: path
+        description: ID do Pedido
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: pedido encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  status:
+                    type: string
+                    enum:
+                    - pending
+                    - in_route
+                    - delivered
+                    - cancelled
+                  delivery_address:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+                  client:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      address:
+                        type: string
+                  store:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      address:
+                        type: string
+                required:
+                - id
+                - status
+                - delivery_address
+                - client
+                - store
+        '404':
+          description: pedido não encontrado
+        '401':
+          description: não autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: You need to sign in or sign up before continuing.
+  "/api/v1/users":
+    post:
+      summary: Registra um novo usuário
+      tags:
+      - Users
+      parameters: []
+      responses:
+        '200':
+          description: usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  email:
+                    type: string
+                    format: email
+                required:
+                - id
+                - email
+        '422':
+          description: entidade não processável (erro de validação)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    description: Detalhes dos erros de validação
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                      description: Email do usuário
+                    password:
+                      type: string
+                      format: password
+                      description: Senha do usuário (mínimo 6 caracteres)
+                    password_confirmation:
+                      type: string
+                      format: password
+                      description: Confirmação da senha
+                  required:
+                  - email
+                  - password
+                  - password_confirmation
+              required:
+              - user
+  "/api/v1/users/sign_in":
+    post:
+      summary: Realiza o login de um usuário
+      tags:
+      - Users
+      description: Permite que qualquer tipo de usuário registrado (administrador
+        ou entregador) realize o login para obter um token JWT.
+      parameters: []
+      responses:
+        '200':
+          description: login bem-sucedido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Logged in successfully.
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      email:
+                        type: string
+                        format: email
+                    required:
+                    - id
+                    - email
+                  token:
+                    type: string
+                    description: Bearer token JWT
+                required:
+                - status
+                - message
+                - user
+                - token
+        '401':
+          description: não autorizado (credenciais inválidas)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid Email or password.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                      description: Email do usuário
+                    password:
+                      type: string
+                      format: password
+                      description: Senha do usuário
+                  required:
+                  - email
+                  - password
+              required:
+              - user
+  "/api/v1/users/sign_out":
+    delete:
+      summary: Realiza o logout de um usuário
+      tags:
+      - Users
+      security:
+      - Bearer: []
+      description: Permite que qualquer usuário autenticado (administrador ou entregador)
+        realize o logout, invalidando o token JWT atual.
+      responses:
+        '200':
+          description: logout bem-sucedido
+        '401':
+          description: não autorizado (token inválido ou ausente)
+  "/api/v1/stores/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: ID da Loja
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Busca detalhes de uma loja
+      tags:
+      - Stores
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: loja encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  address:
+                    type: string
+                required:
+                - id
+                - name
+                - address
+        '401':
+          description: não autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: You need to sign in or sign up before continuing.
+        '404':
+          description: loja não encontrada
+    patch:
+      summary: Atualiza uma loja
+      tags:
+      - Stores
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: loja atualizada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  address:
+                    type: string
+                required:
+                - id
+                - name
+                - address
+        '401':
+          description: não autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: You need to sign in or sign up before continuing.
+        '404':
+          description: loja não encontrada
+        '422':
+          description: entidade não processável (erro de validação)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Novo nome da loja
+                  nullable: true
+                address:
+                  type: string
+                  description: Novo endereço da loja
+                  nullable: true
+servers:
+- url: http://localhost:3000
+  variables:
+    defaultHost:
+      default: localhost:3000
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Token JWT para autenticação. Exemplo: "Authorization: Bearer {token}"'
