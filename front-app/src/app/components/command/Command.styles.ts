@@ -1,0 +1,50 @@
+import { StyleSheet } from 'react-native';
+import { themeColors }  from '../../styles/theme';
+
+export const styles = StyleSheet.create({
+  command: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: themeColors.secondary,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  dialogOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' },
+  dialogContent: {
+    position: 'absolute',
+    top: '15%',
+    left: '5%',
+    right: '5%',
+    maxHeight: '70%',
+    borderRadius: 12,
+    overflow: 'hidden',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: themeColors.border,
+    paddingHorizontal: 12,
+  },
+  input: {
+    flex: 1,
+    height: 48,
+    fontSize: 16,
+    color: themeColors.secondaryForeground,
+    backgroundColor: 'transparent',
+  },
+  list: { maxHeight: 350, paddingHorizontal: 8 },
+  emptyContainer: { paddingVertical: 24, alignItems: 'center' },
+  emptyText: { fontSize: 14, color: themeColors.mutedForeground },
+  groupContainer: { paddingTop: 16, paddingBottom: 6 },
+  groupHeading: { fontSize: 12, fontWeight: '500', color: themeColors.mutedForeground, paddingHorizontal: 8 },
+  separator: { height: 1, backgroundColor: themeColors.border, marginHorizontal: -8, marginTop: 6 },
+  item: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 12, borderRadius: 6 },
+  itemPressed: { backgroundColor: themeColors.accent },
+  itemText: { fontSize: 14, color: themeColors.secondaryForeground },
+  shortcut: { marginLeft: 'auto', fontSize: 12, color: themeColors.mutedForeground },
+});

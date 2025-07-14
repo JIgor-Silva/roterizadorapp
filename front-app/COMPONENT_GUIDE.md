@@ -1,0 +1,54 @@
+# Guia de Componentes do Projeto
+
+Este arquivo descreve brevemente cada componente de UI encontrado em `src/app/components`.
+
+- **Accordion:** Um componente que permite exibir e ocultar seções de conteúdo de forma sanfonada.
+- **AlertDialog:** Um modal que interrompe a ação do usuário para confirmar uma ação ou exibir uma informação crítica.
+- **Alerta (Alert):** Exibe uma mensagem curta e importante que não interrompe o fluxo do usuário.
+- **AspectRatio:** Um container que mantém uma proporção dimensional (largura/altura) constante.
+- **AutoSkeletonView:** Um componente de esqueleto de carregamento que se ajusta automaticamente ao tamanho do seu contêiner. **Utilizado em:** `OrdersList.tsx` para exibir um placeholder enquanto os pedidos estão sendo carregados.
+- **Avatar:** Exibe uma imagem de perfil ou um fallback com iniciais.
+- **Badge:** Exibe um pequeno rótulo ou contador, geralmente para status ou notificações.
+- **Breadcrumb:** Exibe uma trilha de navegação, mostrando a localização do usuário no aplicativo.
+- **Button:** Um botão padrão com vários estilos (padrão, destrutivo, contorno, etc.).
+- **Calendar:** Exibe um calendário para seleção de datas.
+- **Card:** Um container de conteúdo com cabeçalho, corpo e rodapé, usado para agrupar informações.
+- **Carousel:** Um carrossel para exibir itens em um formato de slide.
+- **Chart:** Componente para renderizar gráficos, utilizando a biblioteca `victory-native`.
+- **Checkbox:** Um controle que permite ao usuário selecionar uma ou mais opções de um conjunto.
+- **Collapsible:** Um container que pode ser expandido ou recolhido para mostrar/ocultar conteúdo.
+- **Command:** Uma interface para executar comandos ou pesquisar em uma lista, geralmente dentro de um modal.
+- **ContextMenu:** Exibe um menu de contexto quando um elemento é pressionado por um longo tempo.
+- **CustomSidebar:** Um componente de barra lateral customizado para o menu de navegação do tipo gaveta (drawer).
+- **Dialog:** Um modal que exibe conteúdo sobre a tela principal, com gatilho, conteúdo e botão de fechar.
+- **Drawer:** Um painel que desliza da parte inferior da tela, baseado no `gorhom/bottom-sheet`.
+- **DropdownMenu:** Exibe um menu de opções quando um gatilho é pressionado.
+- **Form:** Um conjunto de componentes para construir formulários com validação, integrado com `react-hook-form`.
+- **HoverCard:** Exibe um pop-up com informações quando o usuário interage com um elemento (mais comum na web).
+- **Input:** Um campo de entrada de texto padrão.
+- **InputOTP:** Um campo de entrada formatado para senhas de uso único (One-Time Passwords).
+- **Label:** Exibe um rótulo de texto, geralmente associado a um campo de formulário.
+- **Menubar:** Uma barra de menu horizontal, comum em aplicações desktop.
+- **NavigationMenu:** Um menu de navegação complexo, geralmente para a navegação principal do site.
+- **OrderCard:** Um card específico e estilizado para exibir os detalhes de um pedido.
+- **OrdersList:** Uma lista que busca e exibe múltiplos componentes `OrderCard`.
+- **Pagination:** Componentes para criar controles de paginação para listas.
+- **Popover:** Exibe conteúdo flutuante em relação a um elemento gatilho.
+- **Progress:** Exibe uma barra de progresso para indicar o andamento de uma tarefa.
+- **RadioGroup:** Permite que o usuário selecione uma única opção de um conjunto.
+- **Resizable:** Componentes que permitem ao usuário redimensionar painéis adjacentes.
+- **ScrollArea:** Uma área de rolagem customizada.
+- **Select:** Um controle que permite ao usuário selecionar um valor de uma lista de opções em um menu suspenso.
+- **Separator:** Exibe uma linha horizontal ou vertical para separar conteúdo visualmente.
+- **Sheet:** Um painel que desliza de uma das bordas da tela (esquerda, direita, topo, baixo).
+- **Skeleton:** Um componente de esqueleto para indicar que o conteúdo está sendo carregado. **Utilizado em:** `AutoSkeletonView.tsx` como a base para o componente de esqueleto automático.
+- **Slider:** Um controle deslizante para selecionar um valor dentro de um intervalo. **Utilizado em:** (Adicionar locais de uso após identificação no front-end).
+- **Switch:** Um controle de alternância (liga/desliga). **Utilizado em:** (Adicionar locais de uso após identificação no front-end).
+- **Table:** Componentes para criar e estilizar tabelas de dados. **Utilizado em:** (Adicionar locais de uso após identificação no front-end).
+- **Tabs:** Permite ao usuário alternar entre diferentes visualizações de conteúdo em abas. **Utilizado em:** (Adicionar locais de uso após identificação no front-end).
+- **Textarea:** Um campo de entrada de texto que permite múltiplas linhas. **Utilizado em:** (Adicionar locais de uso após identificação no front-end).
+- **Toast:** Componentes base para a criação de notificações do tipo "toast". **Utilizado em:** (Adicionar locais de uso após identificação no front-end).
+- **Toaster:** Um sistema completo para gerenciar e exibir notificações "toast" na tela. **Utilizado em:** (Adicionar locais de uso após identificação no front-end).
+- **ToggleGroup:** Um grupo de botões de alternância que podem funcionar como seleção única ou múltipla. **Utilizado em:** (Adicionar locais de uso após identificação no front-end).
+- **Tooltip:** Exibe uma pequena caixa de informação quando um elemento é pressionado. **Utilizado em:** (Adicionar locais de uso após identificação no front-end).
+- **WeatherDisplay:** Um componente para buscar e exibir informações meteorológicas com base na localização. **Utilizado em:** (Adicionar locais de uso após identificação no front-end).
