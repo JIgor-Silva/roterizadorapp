@@ -1,88 +1,156 @@
-# README
+# RoterizadorApp - Backend
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Este é o serviço de backend da aplicação RoterizadorApp, construído com Ruby on Rails. Responsável por gerenciar usuários, pedidos, calcular rotas, integrar com serviços de clima e fornecer uma API robusta para o frontend.
 
-Things you may want to cover:
+## 🚀 Tecnologias Utilizadas
 
-* Ruby version
+*   **Ruby on Rails 8.0.2:** Framework web principal.
+*   **PostgreSQL:** Banco de dados relacional.
+*   **Devise-JWT:** Autenticação de usuários com JSON Web Tokens.
+*   **Pundit:** Autorização e controle de acesso baseado em papéis.
+*   **Rswag (Swagger/OpenAPI):** Geração e visualização de documentação da API.
+*   **Geocoder:** Geocodificação de endereços para coordenadas.
+*   **HTTParty & Faraday:** Clientes para integração com APIs externas (OpenRouteService, WeatherAPI).
+*   **Solid Cache, Solid Queue, Solid Cable:** Soluções de cache, filas e Action Cable baseadas em banco de dados.
+*   **Kamal:** Ferramenta para deploy contêinerizado (Docker).
+*   **Rubocop:** Análise de código estática para garantir padrões de estilo.
+*   **RSpec:** Framework de testes.
 
-* System dependencies
+## ✨ Funcionalidades
 
-* Configuration
+*   **Autenticação de Usuários:** Registro, login e logout com JWT para administradores de loja e entregadores.
+*   **Controle de Acesso Baseado em Papéis (RBAC):** Diferentes permissões para `admin` e `delivery_person`.
+*   **Gestão de Pedidos:** Criação, listagem, visualização e atualização de pedidos.
+*   **Cálculo de Rotas:** Integração com OpenRouteService para calcular distância, duração e polylines de rotas de entrega.
+*   **Dados Climáticos:** Integração com WeatherAPI para obter informações de clima.
+*   **API RESTful:** Interface bem definida para comunicação com o frontend.
+*   **Documentação Interativa da API:** Swagger UI disponível em `/api-docs`.
 
-* Database creation
+## 🛠️ Configuração e Desenvolvimento Local
 
-* Database initialization
+### Pré-requisitos
 
-* How to run the test suite
+Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
 
-* Services (job queues, cache servers, search engines, etc.)
+*   **Ruby** (versão 3.3.0, conforme `.ruby-version`)
+*   **Bundler** (`gem install bundler`)
+*   **PostgreSQL** (servidor de banco de dados)
+*   **Docker** (opcional, para ambiente de desenvolvimento contêinerizado ou deploy)
 
-* Deployment instructions
+### Instalação
 
-* ...
-Relacionamentos Principais entre Modelos:
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/RubyLe/rota.git
+    cd rota/backend
+    ```
 
-User: Pode ser um admin ou delivery_person. Pertence opcionalmente a uma Store. Um entregador tem muitos Orders (pedidos) atribuídos (orders_as_delivery_person).
-Store: Possui muitos Users, Orders e Routes. É geocodificada pelo endereço.
-Client: Possui muitos Orders. É geocodificado pelo endereço.
-Order: Pertence a um Client e a uma Store. Pode ter um delivery_person (User) atribuído e uma Route. Possui um status (ex: pendente, em rota, entregue).
-Route: Pertence a uma Store e opcionalmente a um Order. Contém informações de origem, destino, modo de viagem, distância e múltiplos RoutePoints.
-RoutePoint: Representa um ponto geográfico em uma Route, com latitude, longitude e uma ordem sequencial.
-Controle de Acesso e Permissões:
+2.  **Instale as dependências do Ruby:**
+    ```bash
+    bundle install
+    ```
 
-A autenticação é obrigatória para todas as rotas da API V1 (Api::V1::ApplicationController). As permissões são gerenciadas pelo Pundit, principalmente através da OrderPolicy.
+3.  **Configuração do Banco de Dados:**
+    Edite `config/database.yml` se necessário, mas as configurações padrão para desenvolvimento (`backend_development`) e teste (`backend_test`) geralmente funcionam com um servidor PostgreSQL local.
 
-Administrador (admin):
+    Crie e migre o banco de dados:
+    ```bash
+    rails db:create
+    rails db:migrate
+    ```
 
-Pode listar todos os pedidos (OrderPolicy.Scope).
-Pode visualizar, criar e atualizar qualquer pedido (OrderPolicy).
-Pode atribuir pedidos a entregadores e alterar o status dos pedidos (OrderPolicy.update_status_and_delivery_person?).
-Pode calcular/visualizar detalhes de rotas para qualquer pedido (OrderPolicy).
-Pode gerenciar lojas (visualizar e atualizar via StoresController, outras ações não explicitamente definidas mas implícitas pela estrutura).
-A criação de usuários via Api::V1::RegistrationsController#create atualmente permite apenas email/senha. A atribuição de role e store_id precisaria de um mecanismo de atualização posterior ou ser feita por outros meios (ex: console, seeds), já que sign_up_params não é usado na action create.
-Entregador (delivery_person):
+4.  **Preenchimento de Dados (Seeding):**
+    O arquivo `db/seeds.rb` contém dados de exemplo para lojas, usuários (administradores e entregadores) e pedidos. Ele também tenta geocodificar endereços e criar rotas de exemplo.
 
-Pode listar apenas os pedidos que lhe foram atribuídos (OrderPolicy.Scope).
-Pode visualizar detalhes dos seus pedidos (OrderPolicy.show?).
-Pode atualizar o status dos seus pedidos (OrderPolicy.update_status?).
-Pode calcular/visualizar detalhes de rotas para os seus pedidos (OrderPolicy.calculate_route?, OrderPolicy.route_details?).
-Não pode criar pedidos ou atribuir pedidos a outros entregadores.
-Precisa estar associado a uma store_id (User model validation).
-Criação de Rotas:
+    ```bash
+    rails db:seed
+    ```
+    **Nota sobre o Seeding:** O processo de seeding pode demorar um pouco devido às chamadas de geocodificação. Se houver erros de geocodificação, o script tentará continuar, mas alguns clientes podem ser ignorados.
 
-Para criar uma rota (geralmente no contexto da criação ou cálculo para um Order):
+5.  **Variáveis de Ambiente / Credenciais:**
+    Este projeto utiliza `Rails.application.credentials` para armazenar chaves de API sensíveis. Você precisará configurar as seguintes chaves:
 
-Informações Necessárias:
+    *   `devise.jwt_secret_key`: Chave secreta para JWT (Devise).
+    *   `open_route_service.api_key`: Chave da API do OpenRouteService para cálculo de rotas.
+    *   `weather_map.api_key`: Chave da API do WeatherAPI para dados climáticos.
+    *   `google_geocoding_api_key`: Chave da API do Google Geocoding (usada pelo Geocoder).
 
-Origem: Coordenadas da Store (latitude, longitude).
-Destino: Coordenadas do Client (obtidas geocodificando o delivery_address do Order).
-Modo de Viagem: (travel_mode, ex: 'driving', 'walking').
-Um Order associado.
-Uma Store associada.
-Processo (via OrdersController#create ou OrdersController#calculate_route):
+    Para editar suas credenciais, execute:
+    ```bash
+    EDITOR="nano" rails credentials:edit
+    ```
+    Substitua `"nano"` pelo seu editor de texto preferido. Adicione as chaves no formato YAML:
 
-O delivery_address do cliente é geocodificado para obter latitude/longitude (usando RouteCalculationService.geocode_address).
-As coordenadas da loja (Store) são usadas como origem.
-O RouteCalculationService.calculate_route é chamado com as coordenadas de origem, destino e modo de viagem. Este serviço, quando não mockado, interage com uma API externa (OpenRouteService) para obter a geometria da rota, distância e duração.
-Um registro Route é salvo com os dados da rota e associado ao Order e Store.
-Múltiplos RoutePoints (coordenadas da geometria da rota) são salvos e associados à Route.
-Responsabilidades dos Controladores (Principais Endpoints da API V1):
+    ```yaml
+    devise:
+      jwt_secret_key: SEU_JWT_SECRET_KEY_AQUI
 
-Api::V1::RegistrationsController (/api/v1/users)
-POST /: Criação (registro) de novos usuários.
-Api::V1::SessionsController (/api/v1/users/sign_in, /api/v1/users/sign_out)
-POST /sign_in: Login de usuários, retorna token JWT.
-DELETE /sign_out: Logout de usuários (revoga o token JWT).
-Api::V1::OrdersController (/api/v1/orders)
-GET /: Lista pedidos (filtrados pela política de acesso).
-POST /: Cria um novo pedido e sua rota inicial.
-GET /:id: Mostra detalhes de um pedido específico.
-PATCH/PUT /:id: Atualiza um pedido (ex: status, entregador).
-GET /:id/route_details: Retorna os detalhes da rota de um pedido.
-POST /:id/calculate_route: Calcula (ou recalcula) e salva a rota para um pedido.
-Api::V1::StoresController (/api/v1/stores)
-GET /:id: Mostra detalhes de uma loja.
-PATCH/PUT /:id: Atualiza detalhes de uma loja.
-O RouteCalculationService é um serviço auxiliar, não um controlador, responsável pela lógica de geocodificação e cálculo de rotas, interagindo com APIs externas quando não está em modo mock.
+    open_route_service:
+      api_key: SUA_OPENROUTESERVICE_API_KEY_AQUI
+
+    weather_map:
+      api_key: SUA_WEATHERAPI_API_KEY_AQUI
+
+    google_geocoding_api_key: SUA_GOOGLE_GEOCODING_API_KEY_AQUI
+    ```
+
+### Executando o Servidor
+
+Inicie o servidor Rails no modo de desenvolvimento:
+
+```bash
+rails s
+```
+
+O backend estará disponível em `http://localhost:3000`.
+
+### API Endpoints
+
+A documentação completa da API está disponível em `http://localhost:3000/api-docs` após o servidor estar rodando.
+
+Alguns endpoints importantes incluem:
+
+*   `POST /api/v1/users/sign_in`: Login de usuário.
+*   `DELETE /api/v1/users/sign_out`: Logout de usuário.
+*   `GET /api/v1/stores/:id`: Detalhes da loja.
+*   `GET /api/v1/orders`: Listar todos os pedidos (requer autenticação).
+*   `POST /api/v1/orders/:id/calculate_route`: Calcular rota para um pedido (apenas admin).
+*   `GET /api/v1/orders/delivery_person/:id`: Pedidos de um entregador específico.
+*   `GET /api/v1/weather`: Dados climáticos.
+
+### Testes
+
+Para rodar os testes da aplicação:
+
+```bash
+bundle exec rspec
+```
+
+### Padrões de Código
+
+Este projeto segue os padrões de código definidos pelo Rubocop. Para verificar e corrigir automaticamente problemas de estilo:
+
+```bash
+bundle exec rubocop
+bundle exec rubocop -a # Para corrigir automaticamente
+```
+
+## 🐳 Docker
+
+O `Dockerfile` na raiz do diretório `backend` é otimizado para produção. Para construir a imagem Docker:
+
+```bash
+docker build -t roterizadorapp-backend .
+```
+
+Para rodar o contêiner (substitua `<your_rails_master_key>` pela sua chave mestra do Rails):
+
+```bash
+docker run -d -p 3000:3000 -e RAILS_MASTER_KEY=<your_rails_master_key> --name roterizadorapp-backend roterizadorapp-backend
+```
+
+## 🚀 Deploy com Kamal
+
+Este projeto está configurado para deploy com Kamal. Consulte a documentação do Kamal para configurar seu ambiente de deploy.
+
+---
