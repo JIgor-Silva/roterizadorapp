@@ -67,7 +67,7 @@ class RouteCalculationService
       result = Geocoder.search(address).first
       [ result.latitude, result.longitude ] if result
     rescue StandardError => e
-      Rails.logger.error("Erro ao geocodificar endereço: #{e.message}")
+      Rails.logger.error("Erro ao geocodificar endereço (#{e.class}): #{e.message}")
       nil
     end
   end
