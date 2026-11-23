@@ -23,7 +23,6 @@
     "expo-blur": "~14.1.5",
     "expo-linear-gradient": "~14.1.5",
     "expo-location": "~18.1.6",
-    "expo-router": "~5.1.0",
     "expo-splash-screen": "~0.30.10",
     "expo-status-bar": "~2.2.3",
     "lucide-react-native": "^0.515.0",

@@ -95,11 +95,7 @@ const WeatherDisplay: React.FC<WeatherDisplayProps> = ({ clientLocation, clientO
   }
 
   if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Erro: {error}</Text>
-      </View>
-    );
+    return null;
   }
 
   const renderWeatherCardContent = (weather: WeatherDataType, type: 'date' | 'temp' | 'rain' | 'client') => {

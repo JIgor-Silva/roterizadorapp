@@ -97,8 +97,8 @@ class Api::V1::OrdersController < Api::V1::ApplicationController
         route_data = RouteCalculationService.calculate_route(origin_coords, destination_coords)
 
         if route_data[:error]
-          Rails.logger.error "Erro ao calcular rota sob demanda: #{route_data[:error]}"
-          return render json: { error: 'Não foi possível calcular a rota para este pedido.' }, status: :unprocessable_entity
+          Rails.logger.warn "Rota externa indisponível, usando coordenadas salvas: #{route_data[:error]}"
+          return render json: route, include: :route_points, serializer: Api::V1::RouteSerializer
         end
 
         begin

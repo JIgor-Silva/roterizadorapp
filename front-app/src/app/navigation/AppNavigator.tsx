@@ -19,6 +19,7 @@ const AppNavigator: React.FC = () => {
         headerTransparent: true,
         headerTintColor: '#fff',
         headerTitleStyle: { fontWeight: 'bold' },
+        contentStyle: { backgroundColor: '#1c1c1e' },
       }}
     >
       {screens.map((screen) => (

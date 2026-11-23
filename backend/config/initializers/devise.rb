@@ -7,7 +7,7 @@ Devise.setup do |config|
   
   # Configuração JWT
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.devise[:jwt_secret_key] || 
+    jwt.secret = Rails.application.credentials.dig(:devise, :jwt_secret_key).presence ||
                  Rails.application.secret_key_base
     jwt.expiration_time = 1.day.to_i
   end

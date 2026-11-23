@@ -62,7 +62,7 @@ const authenticatedScreens: ScreenConfig[] = [
       headerTitleAlign: 'center',
     },
   },
-  { name: 'Map', component: MapScreen, options: { title: 'Mapa' } },
+  { name: 'Map', component: MapScreen, options: { title: 'Mapa', headerShown: false } },
   // Adicione outras telas compartilhadas aqui
 ];
 

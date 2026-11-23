@@ -12,4 +12,4 @@ config.resolver = {
   },
 };
 
-module.exports = withNativeWind(config, { input: "./src/styles/global.css" });
+module.exports = withNativeWind(config, { input: "./src/app/styles/global.css" });

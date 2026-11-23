@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import './src/app/styles/global.css';
@@ -8,25 +9,11 @@ import { AuthProvider } from './src/app/context/AuthContext';
 import AppNavigator from './src/app/navigation/AppNavigator';
 
 export default function App() {
-  const [appIsReady, setAppIsReady] = useState(false);
-
   useEffect(() => {
-    async function prepare() {
-      try {
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      document.getElementById('bootsplash')?.remove();
     }
-
-    prepare();
   }, []);
-
-  const handleLoadingComplete = useCallback(() => {
-    setAppIsReady(true);
-  }, []);
-
 
   return (
     <AuthProvider>

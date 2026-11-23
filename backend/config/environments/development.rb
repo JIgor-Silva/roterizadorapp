@@ -15,7 +15,9 @@ Rails.application.configure do
   # Enable server timing.
   config.server_timing = true
 
-  config.active_job.queue_adapter = :solid_queue
+  # Async adapter keeps local setup simple (no Solid Queue tables required).
+  config.active_job.queue_adapter = :async
+
   # Enable/disable Action Controller caching. By default Action Controller caching is disabled.
   # Run rails dev:cache to toggle Action Controller caching.
   if Rails.root.join("tmp/caching-dev.txt").exist?
@@ -51,7 +53,7 @@ Rails.application.configure do
   # Append comments with runtime information tags to SQL queries in logs.
   config.active_record.query_log_tags_enabled = true
 
-  # Highlight code that enqueued background job in logs.
+  # Highlight code that enqueued background jobs in logs.
   config.active_job.verbose_enqueue_logs = true
 
   # Raises error for missing translations.

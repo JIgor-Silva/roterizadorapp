@@ -101,7 +101,7 @@ const LoginScreen = () => {
                       </TouchableOpacity>
                     </View>
                     <View style={styles.demoBox}>
-                      <Text style={styles.demoText}>Credenciais de demonstração:</Text>
+                      <Text style={styles.demoText}>Credenciais de demonstração (senha: 123456):</Text>
                       <Text style={styles.demoCredentials}>Admin: admin@loja.com</Text>
                       <Text style={styles.demoCredentials}>Entregador: entregador@loja.com</Text>
                     </View>
@@ -119,7 +119,7 @@ const LoginScreen = () => {
 LoginScreen.displayName = "LoginScreen";
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: '#1c1c1e' },
   scrollContainer: { flexGrow: 1, justifyContent: 'center' },
   innerContainer: { width: '100%', maxWidth: 450, alignSelf: 'center', padding: 16, gap: 32 },
   titleContainer: { alignItems: 'center', gap: 16 },

@@ -1,17 +1,7 @@
-# config/initializers/geocoder.rb
 Geocoder.configure(
-  # AUMENTE O TEMPO LIMITE AQUI
+  lookup: :nominatim,
   timeout: 15,
-
-  # set to true to use HTTPS for geocoding API calls. default is false.
-  :use_https => true,
-
-  # set to true to use an API key for geocoding service (default is false):
-  :api_key => Rails.application.credentials.google_geocoding_api_key, # Assumindo que você configurou esta chave
-
-  # language to use for geocoding API calls (default is nil):
-  :language => :pt,
-
-  # region to use for geocoding API calls (default is nil):
-  :region => :br
+  use_https: true,
+  language: :pt,
+  http_headers: { "User-Agent" => "RoterizadorApp/1.0 (local development)" }
 )

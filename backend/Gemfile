@@ -23,7 +23,10 @@ gem "faraday"
 gem "bootsnap", require: false
 
 # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
-gem "kamal", require: false
+# Skipped locally: ed25519 (Kamal dep) fails to compile on newer GCC.
+group :deploy do
+  gem "kamal", require: false
+end
 
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", require: false

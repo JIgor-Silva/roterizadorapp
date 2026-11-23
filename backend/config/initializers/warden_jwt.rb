@@ -1,5 +1,5 @@
 Warden::JWTAuth.configure do |config|
-  config.secret = Rails.application.credentials.devise[:jwt_secret_key] || 
+  config.secret = Rails.application.credentials.dig(:devise, :jwt_secret_key).presence ||
                   Rails.application.secret_key_base
   config.dispatch_requests = [['POST', %r{^/api/v1/users/sign_in$}]]
   config.revocation_requests = [['DELETE', %r{^/api/v1/users/sign_out$}]]
