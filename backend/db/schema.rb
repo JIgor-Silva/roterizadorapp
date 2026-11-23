@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_20_212558) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_30_170000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_20_212558) do
     t.float "longitude"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "phone"
+  end
+
+  create_table "jwt_denylist", force: :cascade do |t|
+    t.string "jti", null: false
+    t.datetime "exp", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["jti"], name: "index_jwt_denylist_on_jti"
   end
 
   create_table "orders", force: :cascade do |t|
@@ -29,7 +38,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_20_212558) do
     t.string "delivery_address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status", default: 0
+    t.bigint "delivery_person_id"
+    t.decimal "total"
+    t.boolean "is_late"
     t.index ["client_id"], name: "index_orders_on_client_id"
+    t.index ["delivery_person_id"], name: "index_orders_on_delivery_person_id"
+    t.index ["status"], name: "index_orders_on_status"
     t.index ["store_id"], name: "index_orders_on_store_id"
   end
 
@@ -54,6 +69,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_20_212558) do
     t.float "distance"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "duration"
+    t.text "polyline"
     t.index ["order_id"], name: "index_routes_on_order_id"
     t.index ["store_id"], name: "index_routes_on_store_id"
   end
@@ -75,13 +92,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_20_212558) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "role", default: 0
+    t.bigint "store_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["role"], name: "index_users_on_role"
+    t.index ["store_id"], name: "index_users_on_store_id"
   end
 
   add_foreign_key "orders", "clients"
   add_foreign_key "orders", "stores"
+  add_foreign_key "orders", "users", column: "delivery_person_id"
   add_foreign_key "route_points", "routes"
   add_foreign_key "routes", "orders"
   add_foreign_key "routes", "stores"
+  add_foreign_key "users", "stores"
 end

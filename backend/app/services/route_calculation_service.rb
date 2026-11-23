@@ -58,4 +58,17 @@ class RouteCalculationService
       { error: "Erro de conexão: #{e.message}" }
     end
   end
+
+  # Retorna [latitude, longitude] ou nil se não encontrar.
+  def self.geocode_address(address)
+    return nil if address.blank?
+
+    begin
+      result = Geocoder.search(address).first
+      [ result.latitude, result.longitude ] if result
+    rescue StandardError => e
+      Rails.logger.error("Erro ao geocodificar endereço: #{e.message}")
+      nil
+    end
+  end
 end
