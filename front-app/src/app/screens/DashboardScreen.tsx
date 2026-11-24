@@ -10,24 +10,22 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList, Order, OrderStatus } from '../types/index';
+import { Order, OrderStatus } from '../types/index';
 import { getStatusStyles } from '../components/order/OrderCard.helpers';
 import { Badge } from '../components/badge/Badge';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/api';
 import DashboardStats from './DashboardStats';
 import WeatherDisplay from '../components/WeatherDisplay/WeatherDisplay';
+import RouteMapPreview from '../components/RouteMapPreview/RouteMapPreview';
 import { WeatherDisplayProps } from '../components/WeatherDisplay/WeatherDisplay.types';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Dashboard'>;
 
 const DashboardScreen = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus | 'all'>('all');
-  const navigation = useNavigation<NavigationProp>();
+  const [expandedRouteId, setExpandedRouteId] = useState<number | null>(null);
   const { logout, user } = useAuth();
 
   const urgentClient = useMemo(() => {
@@ -122,12 +120,14 @@ const DashboardScreen = () => {
             <Text style={styles.storeName} numberOfLines={1}>Destino: {order.client.address}</Text>
           </View>
         </View>
-
         {(user?.role === 'delivery_person' || user?.role === 'admin') && order.status === 'in_route' && (
-          <TouchableOpacity style={styles.viewRouteButton} onPress={() => navigation.navigate('Map', { order })}>
-            <Feather name="navigation" size={16} color="#fff" />
-            <Text style={styles.viewRouteButtonText}>Ver Rota</Text>
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity style={styles.viewRouteButton} onPress={() => setExpandedRouteId(expandedRouteId === order.id ? null : order.id)}>
+              <Feather name={expandedRouteId === order.id ? 'chevron-up' : 'navigation'} size={16} color="#fff" />
+              <Text style={styles.viewRouteButtonText}>{expandedRouteId === order.id ? 'Ocultar Rota' : 'Ver Rota'}</Text>
+            </TouchableOpacity>
+            {expandedRouteId === order.id && <RouteMapPreview orderId={order.id} />}
+          </>
         )}
       </View>
     );
