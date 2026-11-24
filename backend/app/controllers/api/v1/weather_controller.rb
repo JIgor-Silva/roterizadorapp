@@ -1,13 +1,19 @@
-class Api::V1::WeatherController < ApplicationController
+# frozen_string_literal: true
+
+class Api::V1::WeatherController < Api::V1::ApplicationController
   def show
     latitude = params[:latitude]
     longitude = params[:longitude]
 
-    if latitude.present? && longitude.present?
-      weather_data = WeatherService.get_weather(latitude, longitude)
-      render json: weather_data
+    unless latitude.present? && longitude.present?
+      return render json: { error: "Latitude e longitude são obrigatórias." }, status: :bad_request
+    end
+
+    weather_data = WeatherService.get_weather(latitude, longitude)
+    if weather_data[:error]
+      render json: { error: weather_data[:error] }, status: :bad_gateway
     else
-      render json: { error: 'Latitude and longitude are required' }, status: :bad_request
+      render json: weather_data
     end
   end
 end
