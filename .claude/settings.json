@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(bundle exec rspec:*)",
+      "Bash(bundle exec rubocop:*)",
+      "Bash(bundle exec brakeman:*)",
+      "Bash(bundle exec rake rswag:specs:swaggerize:*)",
+      "Bash(bundle install:*)",
+      "Bash(bundle list:*)",
+      "Bash(bin/rails routes:*)",
+      "Bash(bin/rails db:migrate:status:*)",
+      "Bash(bin/rails db:migrate:*)",
+      "Bash(bin/rails db:prepare:*)",
+      "Bash(bin/rails db:schema:dump:*)",
+      "Bash(RAILS_ENV=test bin/rails db:prepare:*)",
+      "Bash(bin/rails generate:*)",
+      "Bash(bin/rails g:*)",
+      "Bash(bin/rails runner:*)",
+      "Bash(bin/rails about:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run find-dead-code:*)",
+      "Bash(npm ls:*)",
+      "Bash(npx expo install:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git switch:*)",
+      "Bash(git checkout -b:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git stash:*)",
+      "Bash(pg_isready:*)",
+      "Bash(ls:*)",
+      "Bash(tree:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(jq:*)",
+      "Bash(.claude/scripts/*:*)",
+      "Bash(bash .claude/scripts/*:*)"
+    ],
+    "ask": [
+      "Bash(git push -u origin:*)",
+      "Bash(git push origin:*)",
+      "Bash(git reset:*)",
+      "Bash(git rebase:*)",
+      "Bash(npm install:*)",
+      "Bash(bin/rails db:rollback:*)",
+      "Bash(bin/rails db:seed:*)",
+      "Bash(bin/rails credentials:*)"
+    ],
+    "deny": [
+      "Read(backend/config/master.key)",
+      "Read(**/*.key)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Edit(backend/config/master.key)",
+      "Edit(backend/config/credentials.yml.enc)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(bin/rails db:drop:*)",
+      "Bash(bin/rails db:reset:*)",
+      "Bash(rails db:drop:*)",
+      "Bash(rails db:reset:*)",
+      "Bash(rm -rf /:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-bash.sh\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-files.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-edit-check.sh\"",
+            "timeout": 90
+          }
+        ]
+      }
+    ]
+  }
+}
