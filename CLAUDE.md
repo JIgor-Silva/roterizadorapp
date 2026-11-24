@@ -127,7 +127,6 @@ Verificados em 2026-11-23. Ao corrigir um item, remova-o desta lista.
 **Frontend**
 16. `npx tsc --noEmit` tem 7 erros (theme sem `popoverForeground`, `Client.phone`, `estimatedDelivery`,
     imports de `./components` e `../components/toaster` inexistentes).
-17. `src/services/weatherService.ts` tem IP fixo e usa axios cru (sem token) — deve usar `src/app/api/api.ts`.
 18. Tipos duplicados/desalinhados: `RootStackParamList` em `navigation/navigation.ts` e `types/index.ts`;
     `Order` do front (`customerName`, `address`) ≠ serializer (`customer_name`, `delivery_address`).
 19. `AuthContext` lê `error.response.data.error`, mas o backend devolve `message` no 401.
