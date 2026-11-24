@@ -53,6 +53,8 @@ Atalhos prontos: veja `.claude/commands/` (`/check`, `/test-back`, `/typecheck`,
 - Front lê a URL da API de `EXPO_PUBLIC_API_URL` (fallback `http://localhost:3000/api/v1`). Em celular físico use o IP da máquina.
 - Credenciais em `config/credentials.yml.enc` (chave em `config/master.key`, **nunca ler/commitar**):
   `devise.jwt_secret_key`, `open_route_service.api_key`, `weather_map.api_key`, `google_geocoding_api_key`.
+- **Chaves de integração via `.env`** (gem `dotenv-rails`, só dev/test): `cp backend/.env.example backend/.env` e preencha
+  `ORS_API_KEY` e `WEATHER_API_KEY`. O `.env` é ignorado pelo git; se a variável estiver vazia, o serviço usa a credential.
 
 ---
 

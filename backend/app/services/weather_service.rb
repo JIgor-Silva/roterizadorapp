@@ -2,7 +2,7 @@ require "faraday"
 
 class WeatherService
   def self.get_weather(latitude, longitude)
-    api_key = Rails.application.credentials.dig(:weather_map, :api_key)
+    api_key = ENV["WEATHER_API_KEY"].presence || Rails.application.credentials.dig(:weather_map, :api_key)
     return {} if api_key.blank?
 
     current_url = "http://api.weatherapi.com/v1/current.json?key=#{api_key}&q=#{latitude},#{longitude}&lang=pt"
