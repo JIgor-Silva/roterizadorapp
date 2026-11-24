@@ -66,7 +66,7 @@ Atalhos prontos: veja `.claude/commands/` (`/check`, `/test-back`, `/typecheck`,
 - `Client` — cliente final (name, address, phone, lat/lng; geocodifica automaticamente).
 - `Order` — pertence a client, store e (opcional) `delivery_person` (User). `status` enum:
   `pending: 0 → in_route: 1 → delivered: 2` ou `canceled: 3`. Campos `total`, `is_late`, `delivery_address`.
-  `after_create` enfileira `CalculateRouteJob`.
+  A rota é calculada **só sob demanda** (clique em "Ver Rota" → `route_details`) e fica salva; criar pedido não chama o ORS.
 - `Route` — 1:1 com Order; origem (loja) / destino (cliente), `travel_mode` (driving/walking/bicycling/transit),
   `distance` (metros), `duration` (segundos), `polyline` (string JSON de `[[lng, lat], ...]`).
 - `RoutePoint` — pontos ordenados da rota (`order` = índice).
@@ -90,7 +90,7 @@ Atalhos prontos: veja `.claude/commands/` (`/check`, `/test-back`, `/typecheck`,
 
 | Serviço         | Onde                                         | Observações |
 |-----------------|----------------------------------------------|-------------|
-| OpenRouteService | `app/services/route_calculation_service.rb` | perfil `driving-hgv`; **ORS usa `[lng, lat]`**, o app usa `[lat, lng]` internamente — sempre `.reverse` na fronteira. Retorna `{distance, duration, geometry}` ou `{error:}` (nunca levanta exceção). |
+| OpenRouteService | `app/services/route_calculation_service.rb` | base `https://api.heigit.org/openrouteservice` (o domínio antigo `api.openrouteservice.org` retorna 410 desde 24/11/2026; sobrescreva com `ORS_BASE_URL`); perfil `driving-hgv`; **ORS usa `[lng, lat]`**, o app usa `[lat, lng]` internamente — sempre `.reverse` na fronteira. Retorna `{distance, duration, geometry}` ou `{error:}` (nunca levanta exceção). |
 | WeatherAPI      | `app/services/weather_service.rb`            | current + forecast, `lang=pt`. |
 | Geocoder (Nominatim) | `config/initializers/geocoder.rb`, models | `geocoded_by :address` em Store/Client. Nominatim tem rate limit (1 req/s). |
 | Devise-JWT      | `config/initializers/warden_jwt.rb`          | dispatch no sign_in, revogação no sign_out. |
@@ -117,8 +117,6 @@ Verificados em 2026-11-23. Ao corrigir um item, remova-o desta lista.
 
 **Correção / consistência**
 9. `OrderPolicy` tem `route_details?` e `calculate_route?` duplicados; `update?` deixa qualquer usuário da loja alterar qualquer pedido.
-10. `Order#after_create` enfileira `CalculateRouteJob` que concorre com a rota criada no controller; o job
-    salva `polyline` como `to_json`, `route_details` salva array cru → formatos inconsistentes.
 11. `orders#create` geocodifica 2x o mesmo endereço e, se achar rota existente para o endereço, **não cria o pedido**.
 12. `delivery_person_orders` responde 401 onde deveria ser 403.
 13. `AppConfig.use_route_service_mock` existe mas não é usado.
