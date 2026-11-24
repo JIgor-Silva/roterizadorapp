@@ -6,7 +6,7 @@ class WeatherService
   BASE_URL = "https://api.weatherapi.com/v1"
 
   def self.get_weather(latitude, longitude)
-    api_key = Rails.application.credentials.dig(:weather_map, :api_key)
+    api_key = ENV["WEATHER_API_KEY"].presence || Rails.application.credentials.dig(:weather_map, :api_key)
     return { error: "Chave da WeatherAPI não configurada." } if api_key.blank?
 
     query = { key: api_key, q: "#{latitude},#{longitude}", lang: "pt" }

@@ -15,31 +15,41 @@ const WeatherDisplay: React.FC<WeatherDisplayProps> = ({ clientLocation, clientO
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentTitle, setCurrentTitle] = useState('Carregando Clima...');
+  const [usingDestination, setUsingDestination] = useState(false);
 
   useEffect(() => {
     const fetchWeatherData = async () => {
       setLoading(true);
       setError(null);
+      setUsingDestination(false);
+      const hasClient = !!(clientLocation && clientLocation.latitude && clientLocation.longitude);
+      let coords: { latitude: number; longitude: number } | null = null;
       try {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setError('Permission to access location was denied');
-          setLoading(false);
-          return;
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === 'granted') {
+          const location = await Location.getCurrentPositionAsync({});
+          coords = { latitude: location.coords.latitude, longitude: location.coords.longitude };
         }
-
-        let location = await Location.getCurrentPositionAsync({});
-        const dpWeather = await fetchWeather(location.coords.latitude, location.coords.longitude);
-        setDeliveryPersonWeather(dpWeather);
-        if (clientLocation && clientLocation.latitude && clientLocation.longitude) {
-          const cWeather = await fetchWeather(clientLocation.latitude, clientLocation.longitude);
-          setClientWeather(cWeather);
-        } else {
+      } catch {
+        coords = null;
+      }
+      try {
+        if (coords) {
+          setDeliveryPersonWeather(await fetchWeather(coords.latitude, coords.longitude));
+          if (hasClient && clientLocation) {
+            setClientWeather(await fetchWeather(clientLocation.latitude, clientLocation.longitude));
+          } else {
+            setClientWeather(null);
+          }
+        } else if (hasClient && clientLocation) {
+          setDeliveryPersonWeather(await fetchWeather(clientLocation.latitude, clientLocation.longitude));
           setClientWeather(null);
+          setUsingDestination(true);
+        } else {
+          setError('Localização indisponível.');
         }
-      } catch (e) {
-        console.error('Error fetching weather data:', e);
-        setError('Failed to fetch weather data');
+      } catch {
+        setError('Não foi possível carregar o clima.');
       } finally {
         setLoading(false);
       }
@@ -73,7 +83,7 @@ const WeatherDisplay: React.FC<WeatherDisplayProps> = ({ clientLocation, clientO
     } else if (error) {
       setCurrentTitle('Erro ao carregar clima');
     } else if (deliveryPersonWeather && activeIndex === 0) {
-      setCurrentTitle(`Seu Clima Atual (${deliveryPersonWeather.location.name})`);
+      setCurrentTitle(`${usingDestination ? 'Clima no Destino' : 'Seu Clima Atual'} (${deliveryPersonWeather.location.name})`);
     } else if (deliveryPersonWeather && activeIndex === 1) {
       setCurrentTitle(`Temperatura Atual (${deliveryPersonWeather.location.name})`);
     } else if (deliveryPersonWeather && activeIndex === 2) {
@@ -83,7 +93,7 @@ const WeatherDisplay: React.FC<WeatherDisplayProps> = ({ clientLocation, clientO
     } else {
       setCurrentTitle('Nenhum dado de clima disponível.');
     }
-  }, [activeIndex, loading, error, deliveryPersonWeather, clientWeather, clientOrderId, clientName]);
+  }, [activeIndex, loading, error, deliveryPersonWeather, clientWeather, clientOrderId, clientName, usingDestination]);
 
   if (loading) {
     return (

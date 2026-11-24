@@ -4,7 +4,7 @@ require "json"
 
 class RouteCalculationService
   BASE_URL = "https://api.openrouteservice.org"
-  API_KEY = Rails.application.credentials.dig(:open_route_service, :api_key)
+  API_KEY = ENV["ORS_API_KEY"].presence || Rails.application.credentials.dig(:open_route_service, :api_key)
 
   # coordenadas no formato [LATITUDE, LONGITUDE]
   def self.calculate_route(origin_lat_lon, destination_lat_lon)
@@ -67,7 +67,7 @@ class RouteCalculationService
       result = Geocoder.search(address).first
       [ result.latitude, result.longitude ] if result
     rescue StandardError => e
-      Rails.logger.error("Erro ao geocodificar endereço: #{e.message}")
+      Rails.logger.error("Erro ao geocodificar endereço (#{e.class}): #{e.message}")
       nil
     end
   end

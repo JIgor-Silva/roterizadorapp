@@ -49,6 +49,8 @@ group :development, :test do
   gem "rswag-api"
   gem "rswag-ui"
   gem "rswag-specs"
+  # Carrega variáveis de ambiente do arquivo .env em desenvolvimento e testes
+  gem "dotenv-rails"
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
 

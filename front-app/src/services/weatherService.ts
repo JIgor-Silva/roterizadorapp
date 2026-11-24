@@ -1,15 +1,10 @@
-import axios from 'axios';
+import api from '../app/api/api';
+import { WeatherDataType } from '../app/components/WeatherDisplay/WeatherDisplay.types';
 
-const API_BASE_URL = 'http://192.168.2.23:3000/api/v1';
-
-export const fetchWeather = async (latitude: number, longitude: number) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/weather`, {
-      params: { latitude, longitude },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching weather data:', error);
-    throw error;
+export const fetchWeather = async (latitude: number, longitude: number): Promise<WeatherDataType> => {
+  const response = await api.get<WeatherDataType>('/weather', { params: { latitude, longitude } });
+  if (!response.data?.current || !response.data?.location || !response.data?.forecast) {
+    throw new Error('Resposta de clima inválida.');
   }
+  return response.data;
 };
