@@ -1,6 +1,9 @@
 # frozen_string_literal: true
+
 class Api::V1::StoresController < Api::V1::ApplicationController
-  before_action :set_store, only: [:show, :update]
+  before_action :set_store, only: [ :show, :update ]
+  before_action :authorize_store, only: [ :show, :update ]
+
   # GET /api/v1/stores/:id
   def show
     render json: @store, serializer: Api::V1::StoreSerializer
@@ -21,12 +24,11 @@ class Api::V1::StoresController < Api::V1::ApplicationController
     @store = Store.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Loja não encontrada." }, status: :not_found
-    nil 
   end
 
-  # def authorize_store_access
-  #   authorize @store
-  # end
+  def authorize_store
+    authorize @store
+  end
 
   def store_params
     params.require(:store).permit(:name, :address)
