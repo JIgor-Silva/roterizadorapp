@@ -2,8 +2,14 @@
 description: Esteira de entrega — branch, commit curto, review do Kimi, push e PR para o usuário conferir
 argument-hint: "[nome-da-branch]"
 ---
-Esteira obrigatória ao finalizar qualquer demanda. Siga na ordem:
+Esteira obrigatória de toda demanda (o passo 0 vem antes de alterar qualquer arquivo). Siga na ordem:
 
+0. **Sincronizar com a main** (antes de alterar qualquer coisa):
+   - Rodar `git status --porcelain`; se houver arquivos, executar `git stash -u`.
+   - `git checkout main && git pull`.
+   - Se fez stash, executar `git stash apply` (resolver conflitos antes de seguir).
+   - Sem arquivos pendentes, só executar `git checkout main && git pull`.
+   Os comandos locais rodam pelo Kimi (`kimi_run_command` em `/workspace/projetos/roterizadorapp`), mas `git pull`/`git push` rodam no host porque o container do Kimi não tem acesso SSH ao GitHub.
 1. **Branch**: uma branch por demanda, a partir da `main` (ou da branch da qual a demanda depende —
    nesse caso o PR aponta para essa base). Nome: `<tipo>-<descricao-com-hifens>` (`$ARGUMENTS` se informado).
 2. **Verificação**: specs/rubocop/tsc dos arquivos tocados passando (`/check`).
