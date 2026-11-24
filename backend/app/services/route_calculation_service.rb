@@ -3,7 +3,8 @@ require "httparty"
 require "json"
 
 class RouteCalculationService
-  BASE_URL = "https://api.openrouteservice.org"
+  # Desde 24/11/2026 o ORS responde em api.heigit.org (api.openrouteservice.org retorna 410).
+  BASE_URL = ENV["ORS_BASE_URL"].presence || "https://api.heigit.org/openrouteservice"
   API_KEY = ENV["ORS_API_KEY"].presence || Rails.application.credentials.dig(:open_route_service, :api_key)
 
   # coordenadas no formato [LATITUDE, LONGITUDE]
